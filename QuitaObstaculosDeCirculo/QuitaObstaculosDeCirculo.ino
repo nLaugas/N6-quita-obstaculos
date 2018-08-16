@@ -67,9 +67,9 @@ std::vector<void (*)()>  stateMachine = {
     digitalWrite(MOTOR_LEFT_FORWARD , LOW);
     digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
   },
-  // ------------------Estado 1 - AVANZAR----------------------//
+  // ------------------Estado 1 - BACK----------------------//
   []() {  
-    if ((anglePitchPhone > HALF_PITCH - PITCH_OFFSET_NULL  ) || (!enableForward())){ 
+    if (){ 
       state = 0;
       DEBUG("DETENIDO");
       DEBUG(speed);
@@ -80,9 +80,9 @@ std::vector<void (*)()>  stateMachine = {
     digitalWrite(MOTOR_LEFT_FORWARD , LOW);
     digitalWrite(MOTOR_RIGHT_FORWARD, HIGH);
   },
-  // ------------------Estado 2 - RETROCEDER--------------------//
+  // ------------------Estado 2 - SPIN--------------------//
   []() { 
-    if ((anglePitchPhone < HALF_PITCH + PITCH_OFFSET_NULL) || (!enableRearward())){
+    if (){
       state = 0;
       DEBUG("DETENIDO");
       DEBUG(speed);
@@ -95,9 +95,9 @@ std::vector<void (*)()>  stateMachine = {
     
     
   },
-  // ------------------Estado 3 - DERECHA-----------------------//
+  // ------------------Estado 3 - FORWARD-----------------------//
   []() { 
-    if ((angleRollPhone < HALF_ROLL + ROLL_OFFSET_NULL) || (!enableForward())){
+    if (){
       state = 0;
       DEBUG("DETENIDO");
       DEBUG(speed);
@@ -108,20 +108,6 @@ std::vector<void (*)()>  stateMachine = {
     digitalWrite(MOTOR_LEFT_FORWARD , LOW);
     digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
     
-  },
-  // ------------------Estado 4 - IZQUIERDA----------------------//
-  []() { 
-    if ((angleRollPhone > HALF_ROLL - ROLL_OFFSET_NULL) || (!enableForward())){
-      state = 0;
-      DEBUG("DETENIDO");
-      DEBUG(speed);
-    } 
-    speed = map(angleRollPhone,HALF_ROLL - ROLL_OFFSET_NULL,MIN_ROLL,MIN_POWER_MOTOR,MAX_POWER_MOTOR);
-    digitalWrite(MOTOR_RIGHT_REARWARD,LOW);
-    digitalWrite(MOTOR_LEFT_REARWARD, LOW);
-    digitalWrite(MOTOR_LEFT_FORWARD , HIGH);
-    digitalWrite(MOTOR_RIGHT_FORWARD, HIGH);
-
   }
 };
 
@@ -144,17 +130,9 @@ void setup()
   digitalWrite(MOTOR_LEFT_FORWARD , LOW);
   digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
 
-  digitalWrite(GND_ESP8266,LOW);
 }
-String str;
 void loop() {
-    if (ESP8266.available()){
-      str   =  ESP8266.readString();
-      String pitch = str.substring(str.indexOf('i')+1,str.indexOf('m'));
-      String roll  = str.substring(str.indexOf('m')+1,str.indexOf('f'));
-      angleRollPhone  = roll.toInt();
-      anglePitchPhone = pitch.toInt();
-    }
+ 
     
     stateMachine[state]();
     analogWrite(MOTOR_RIGHT_PWM, speed);
